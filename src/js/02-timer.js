@@ -36,7 +36,7 @@ function startTimer() {
   const currentDate = new Date();
   const difference = selectedDate - currentDate;
 
-  if (difference <= 0) {
+  if (difference <= 1000) {
     clearInterval(countdownInterval);
     return;
   }
