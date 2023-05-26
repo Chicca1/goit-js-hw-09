@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="./js/02-timer.js" defer type="module"></script>
-  <title>Timer</title>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <link rel="stylesheet" href="css/common.css" />
 </head>
 <body>
-
-
   <input type="text" id="datetime-picker" />
   <button type="button" data-start disabled>Start</button>
-  
+
   <div class="timer">
     <div class="field">
       <span class="value" data-days>00</span>
@@ -33,6 +28,6 @@
     </div>
   </div>
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> -->
+  <script src="./js/02-timer.js" type="module"></script>
 </body>
 </html>

@@ -1,6 +1,19 @@
 const form = document.querySelector('.form');
 form.addEventListener('submit', handleSubmit);
 
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates, dateStr, instance) {
+    console.log(selectedDates[0]);
+    const startButton = document.querySelector('[data-start]');
+    startButton.disabled = selectedDates[0] <= new Date();
+  },
+};
+
+
 function handleSubmit(event) {
   event.preventDefault(); 
 

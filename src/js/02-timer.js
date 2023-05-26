@@ -1,5 +1,16 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import notiflix from "notiflix";
+
+const datePicker = document.getElementById("datetime-picker");
+const startButton = document.querySelector("[data-start]");
+const daysElement = document.querySelector("[data-days]");
+const hoursElement = document.querySelector("[data-hours]");
+const minutesElement = document.querySelector("[data-minutes]");
+const secondsElement = document.querySelector("[data-seconds]");
+
+let selectedDate;
+let timerInterval;
 
 const options = {
   enableTime: true,
@@ -7,74 +18,85 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    const selectedDate = selectedDates[0];
+    selectedDate = selectedDates[0];
+    const currentDate = new Date();
 
-    if (selectedDate < new Date()) {
-      window.alert("Please choose a date in the future");
-      return;
+    if (selectedDate <= currentDate) {
+      notiflix.Notify.failure("Please choose a date in the future");
+      startButton.disabled = true;
+    } else {
+      startButton.disabled = false;
     }
-
-    const startButton = document.querySelector('[data-start]');
-    startButton.disabled = false;
   },
 };
 
-const datetimePicker = document.querySelector('#datetime-picker');
-flatpickr(datetimePicker, options);
+flatpickr(datePicker, options);
 
-const timerFields = {
-  days: document.querySelector('[data-days]'),
-  hours: document.querySelector('[data-hours]'),
-  minutes: document.querySelector('[data-minutes]'),
-  seconds: document.querySelector('[data-seconds]')
-};
-
-let countdownInterval;
-
-function startTimer() {
-  const selectedDate = flatpickr.parseDate(datetimePicker.value);
-  const currentDate = new Date();
-  const difference = selectedDate - currentDate;
-
-  if (difference <= 1000) {
-    clearInterval(countdownInterval);
-    return;
-  }
-
-  countdownInterval = setInterval(() => {
-    const remainingTime = convertMs(selectedDate - new Date());
-    updateTimer(remainingTime);
-  }, 1000);
-
-  const startButton = document.querySelector('[data-start]');
-  startButton.disabled = true;
-}
-
-function updateTimer(remainingTime) {
-  timerFields.days.textContent = addLeadingZero(remainingTime.days);
-  timerFields.hours.textContent = addLeadingZero(remainingTime.hours);
-  timerFields.minutes.textContent = addLeadingZero(remainingTime.minutes);
-  timerFields.seconds.textContent = addLeadingZero(remainingTime.seconds);
+function updateTimerDisplay(time) {
+  daysElement.textContent = addLeadingZero(time.days);
+  hoursElement.textContent = addLeadingZero(time.hours);
+  minutesElement.textContent = addLeadingZero(time.minutes);
+  secondsElement.textContent = addLeadingZero(time.seconds);
 }
 
 function addLeadingZero(value) {
-    return String(value).padStart(2, '0');
+  return value.toString().padStart(2, "0");
+}
+
+function startTimer() {
+  if (timerInterval) {
+    return;
   }
-  
-  function convertMs(ms) {
-    const second = 1000;
-    const minute = second * 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-  
-    const days = Math.floor(ms / day);
-    const hours = Math.floor((ms % day) / hour);
-    const minutes = Math.floor(((ms % day) % hour) / minute);
-    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-  
-    return { days, hours, minutes, seconds };
+
+  const currentDate = new Date();
+  const timeRemaining = selectedDate - currentDate;
+
+  if (timeRemaining <= 0) {
+    notiflix.Notify.success("Countdown completed");
+    return;
   }
-  
-  const startButton = document.querySelector('[data-start]');
-  startButton.addEventListener('click', startTimer);
-  
+
+  startButton.disabled = true;
+  datePicker.disabled = true;
+
+  timerInterval = setInterval(() => {
+    const currentDate = new Date();
+    const timeRemaining = selectedDate - currentDate;
+
+    if (timeRemaining <= 0) {
+      clearInterval(timerInterval);
+      updateTimerDisplay({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      notiflix.Notify.success("Countdown completed");
+
+      startButton.disabled = false;
+      datePicker.disabled = false;
+
+      timerInterval = null;
+      return;
+    }
+
+    const time = convertMs(timeRemaining);
+    updateTimerDisplay(time);
+  }, 1000);
+}
+
+function convertMs(ms) {
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+
+  // Remaining days
+  const days = Math.floor(ms / day);
+  // Remaining hours
+  const hours = Math.floor((ms % day) / hour);
+  // Remaining minutes
+  const minutes = Math.floor((ms % hour) / minute);
+  // Remaining seconds
+  const seconds = Math.floor((ms % minute) / second);
+
+  return { days, hours, minutes, seconds };
+}
+
+startButton.addEventListener("click", startTimer);
