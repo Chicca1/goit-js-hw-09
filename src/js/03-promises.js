@@ -13,8 +13,8 @@ function createPromise(position, delay) {
 
 const form = document.querySelector('.form');
 const createBtn = document.querySelector('#createBtn');
+form.addEventListener('submit', (event) => {
 
-createBtn.addEventListener('click', () => {
   const { step, delay, amount } = form.elements;
 
   const delayInput = parseInt(delay.value);
