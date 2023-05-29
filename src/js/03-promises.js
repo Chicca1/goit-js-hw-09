@@ -24,11 +24,17 @@ form.addEventListener('submit', (event) => {
   for (let i = 0; i < amountInput; i++) {
     createPromise(i, delayInput + i * stepInput)
       .then(({ position, delay }) => {
-        Notiflix.Notify.Success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        Notiflix.Notify.Success(`✅ Fulfilled promise ${position} in ${delay}ms`,);
       })
       .catch(({ position, delay }) => {
         Notiflix.Notify.Failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
+      Notiflix.Notify.Init({
+        timeout: 5000 // Установите желаемое время отображения в миллисекундах
+      });
+      
+     
+      
   }
 
   form.reset();
