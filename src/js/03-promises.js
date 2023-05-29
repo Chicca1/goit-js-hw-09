@@ -30,7 +30,7 @@ form.addEventListener('submit', (event) => {
         Notiflix.Notify.Failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
       Notiflix.Notify.Init({
-        timeout: 5000 // Установите желаемое время отображения в миллисекундах
+        timeout: 5000 
       });
       
      
